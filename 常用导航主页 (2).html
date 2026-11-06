@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>常用导航</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231E6FFF'/%3E%3Cg fill='%23fff'%3E%3Crect x='16' y='16' width='13' height='13' rx='3'/%3E%3Crect x='35' y='16' width='13' height='13' rx='3'/%3E%3Crect x='16' y='35' width='13' height='13' rx='3'/%3E%3Crect x='35' y='35' width='13' height='13' rx='3'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #F2F4F8;
+    --surface: #FFFFFF;
+    --line: #E2E6EF;
+    --text: #1B2130;
+    --text-dim: #79828F;
+    --accent: #1E6FFF;
+    --accent-tint: #E9F0FF;
+    --shadow: 0 6px 16px rgba(27, 33, 48, .10);
+    --font: "PingFang SC", "Microsoft YaHei", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.4;
+    min-height: 100vh;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: baseline; gap: 9px; flex: none; }
+  .brand h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .01em; white-space: nowrap; }
+  .brand span { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+  .search { position: relative; flex: 1; max-width: 420px; margin-left: auto; }
+  .search svg {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 15px; height: 15px; stroke: var(--text-dim); pointer-events: none;
+  }
+  #q {
+    width: 100%; height: 38px; padding: 0 34px;
+    font-size: 14px; font-family: var(--font); color: var(--text);
+    background: #F6F8FB; border: 1px solid var(--line); border-radius: 9px;
+    outline: none; transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  #q::placeholder { color: #9AA3B2; }
+  #q:focus { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-tint); }
+  #clear {
+    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
+    width: 24px; height: 24px; display: none; align-items: center; justify-content: center;
+    border: 0; background: none; color: var(--text-dim); font-size: 15px; cursor: pointer; border-radius: 6px;
+  }
+  #clear:hover { background: var(--bg); color: var(--text); }
+
+  main {
+    max-width: 1680px; width: 100%; margin: 0 auto;
+    padding: 14px 20px 10px;
+  }
+  .cols { display: grid; grid-template-columns: 1fr; gap: 22px; }
+  @media (min-width: 900px) { .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+
+  section { min-width: 0; }
+  section.hidden { display: none; }
+
+  .sec-head { display: flex; align-items: center; gap: 8px; height: 26px; margin-bottom: 9px; }
+  .sec-bar { width: 3px; height: 15px; border-radius: 2px; background: var(--g); flex: none; }
+  .sec-title { font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+  .sec-count {
+    font-size: 12px; color: var(--text-dim); background: #fff;
+    border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; line-height: 18px;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (min-width: 640px) { .grid.fun-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (min-width: 900px) { .grid.fun-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+  /* 宽屏时把高频三栏撑满首屏高度，卡片随之自动变高 */
+  @media (min-width: 900px) {
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    main { flex: 1; display: flex; flex-direction: column; }
+    .cols { flex: 1; }
+    .cols > section { display: flex; flex-direction: column; }
+    .cols .grid { flex: 1; grid-auto-rows: minmax(52px, 1fr); align-content: stretch; }
+  }
+
+  .card {
+    display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 13px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    text-decoration: none; color: var(--text); min-width: 0;
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  }
+  .card:hover, .card:focus-visible {
+    transform: translateY(-1px); box-shadow: var(--shadow); border-color: var(--g-border); outline: none;
+  }
+  .card:active { transform: translateY(0); }
+  .card.hidden { display: none; }
+  .card.wide { grid-column: 1 / -1; }
+
+  .ico {
+    flex: none; width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--g-tint); color: var(--g); font-size: 14.5px; font-weight: 700;
+  }
+  .name {
+    min-width: 0; font-size: 15px; font-weight: 600; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .fun-wrap { margin-top: 20px; }
+
+  .empty {
+    display: none; padding: 56px 20px; text-align: center; color: var(--text-dim); font-size: 13.5px;
+  }
+  .empty.show { display: block; }
+  .empty strong { display: block; color: var(--text); font-size: 15px; margin-bottom: 5px; }
+
+  .tip { max-width: 1680px; width: 100%; margin: 0 auto; padding: 0 20px 14px; color: #9AA3B2; font-size: 11.5px; }
+
+  @media (max-width: 899px) {
+    header { flex-wrap: wrap; gap: 9px; padding: 10px 14px; }
+    .brand { flex: 1; }
+    .search { flex-basis: 100%; max-width: none; margin-left: 0; }
+    #q { font-size: 16px; }
+    main { padding: 12px 14px 8px; }
+    .cols { gap: 18px; }
+    .card { min-height: 46px; }
+    .tip { padding: 0 14px 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+    .card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>常用导航</h1>
+    <span>98 个站点 · 常用三组一屏看齐，娱乐在下方继续往下滑</span>
+  </div>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+    <input id="q" type="search" placeholder="搜索网址名称或域名" autocomplete="off" spellcheck="false">
+    <button id="clear" type="button" aria-label="清空搜索">&times;</button>
+  </div>
+</header>
+
+<main id="main">
+  <div class="cols" id="cols"></div>
+  <div class="fun-wrap" id="funWrap"></div>
+  <div class="empty" id="empty">
+    <strong>没有匹配的网址</strong>
+    换个关键词，或按 Esc 清空搜索
+  </div>
+</main>
+<p class="tip">维护方式：打开本文件，改末尾 <code>NAV_GROUPS</code> 数组即可增删网址；娱乐组排在最后，往下滚动即可看到全部。</p>
+
+<script>
+const NAV_GROUPS = [
+  {
+    "title": "娱乐网站",
+    "links": [
+      {
+        "name": "阿瓦隆",
+        "url": "https://game.hullqin.cn/awl"
+      },
+      {
+        "name": "全平台热榜",
+        "url": "https://remoshuang.com/"
+      },
+      {
+        "name": "奇趣网站",
+        "url": "https://fuun.fun/"
+      },
+      {
+        "name": "每日一看",
+        "url": "https://www.meiriyikan.com/"
+      },
+      {
+        "name": "免费游戏网",
+        "url": "https://www.mianfeiyouxi.com/"
+      },
+      {
+        "name": "全平台热点",
+        "url": "https://www.redianba.com/"
+      },
+      {
+        "name": "你画我猜",
+        "url": "https://enazo.cn/"
+      },
+      {
+        "name": "游戏时光机",
+        "url": "https://youxisgj.com/"
+      },
+      {
+        "name": "在线听歌",
+        "url": "https://charlespikachu.github.io/musicsquare/"
+      },
+      {
+        "name": "百度地图",
+        "url": "https://map.baidu.com/"
+      },
+      {
+        "name": "日历",
+        "url": "https://www.baidu.com/s?wd=%E6%97%A5%E5%8E%86"
+      },
+      {
+        "name": "济南天气",
+        "url": "https://www.baidu.com/s?wd=%E6%B5%8E%E5%8D%97%E5%A4%A9%E6%B0%94"
+      },
+      {
+        "name": "实时地球",
+        "url": "https://zoom.earth/maps/radar/#view=33.58,121.412,6z"
+      },
+      {
+        "name": "打字练习",
+        "url": "https://www.wubidz.cn/jplx/"
+      },
+      {
+        "name": "表情包",
+        "url": "https://www.fabiaoqing.com/"
+      },
+      {
+        "name": "斗图吧",
+        "url": "https://www.doutupk.com/"
+      },
+      {
+        "name": "在线影院",
+        "url": "https://www.xmfyy.vip/"
+      },
+      {
+        "name": "在线电影",
+        "url": "https://www.dushe9.app/"
+      },
+      {
+        "name": "电影天堂",
+        "url": "https://dytt8899.com/"
+      },
+      {
+        "name": "YouTube",
+        "url": "https://www.youtube.com/"
+      },
+      {
+        "name": "B站",
+        "url": "http://www.bilibili.com/"
+      },
+      {
+        "name": "抖音",
+        "url": "https://www.douyin.com/"
+      },
+      {
+        "name": "小红书",
+        "url": "https://www.xiaohongshu.com/explore"
+      },
+      {
+        "name": "知乎",
+        "url": "https://www.zhihu.com/"
+      },
+      {
+        "name": "虎扑",
+        "url": "https://bbs.hupu.com/all-gambia"
+      },
+      {
+        "name": "TikTok视频下载",
+        "url": "https://urlebird.com/"
+      },
+      {
+        "name": "2048",
+        "url": "https://www.saolei.games/2048.html"
+      },
+      {
+        "name": "扫雷",
+        "url": "https://www.saolei.games/saolei.html"
+      },
+      {
+        "name": "在线五子棋",
+        "url": "https://www.saolei.games/wuziqi.html"
+      },
+      {
+        "name": "蜘蛛纸牌",
+        "url": "https://www.saolei.games/zhipai.html"
+      },
+      {
+        "name": "抓大鹅无广告",
+        "url": "https://cdn-zhuadae.lanfeitech.com/dy/H5/prod/html/7.0/index.html"
+      },
+      {
+        "name": "小霸王游戏机",
+        "url": "https://www.yikm.net/"
+      },
+      {
+        "name": "挂机摸鱼游戏",
+        "url": "https://www.gityx.com/?hmsr=oschina"
+      },
+      {
+        "name": "极地冬日",
+        "url": "https://costwores.zywxgames.com/users/yz/zmx/202607/web/jddr/1/web-mobile/index.html?hide_nav_bar=0"
+      },
+      {
+        "name": "这关不简单",
+        "url": "https://cdn.wxxyxnb.com/Web/JiuGe/0413/web-mobile/index.html"
+      },
+      {
+        "name": "疯狂买石头",
+        "url": "https://file.gugudang.com/res/down/public/p_dushi/web-mobile/lts_ssss/index.html?t=1787301886972"
+      },
+      {
+        "name": "这关拼了",
+        "url": "https://cdn.p8games.com/cdn/games/hz-tafang/"
+      },
+      {
+        "name": "狙击外星人",
+        "url": "https://ares.kampfiregames.cn/3/7fa6975965386ad3b9a88724fdc13f96/index.html"
+      },
+      {
+        "name": "饥饿鲨-WASD操控",
+        "url": "https://publishing.u3d.cn/game/jes"
+      },
+      {
+        "name": "俺不中了",
+        "url": "https://aliyun.umgame.cn/minigame_preview/11485/32.22/out_web/out_web.html"
+      },
+      {
+        "name": "看我秀一把",
+        "url": "https://aliyun.umgame.cn/minigame_preview/11289/1.0.0/web-mobile/index.html"
+      },
+      {
+        "name": "王者之战",
+        "url": "https://gametos.keepmobi.com/web-games/wang-zhe-zhi-zhan/1.0.16zxcv/web-mobile/index.html"
+      },
+      {
+        "name": "军团毁灭老虎机",
+        "url": "https://leju-game-res.ok6.online/test/A381_WebGL/%E5%86%9B%E5%9B%A2%E6%AF%81%E7%81%AD%E5%A4%A7%E6%88%98/index.html"
+      },
+      {
+        "name": "花园建造师",
+        "url": "https://gamesres.ultralisk.cn/h5_games_daren/276_1786348662953/index.html"
+      },
+      {
+        "name": "放置探险团",
+        "url": "https://gamesres.ultralisk.cn/h5_games_daren/270v4_1786504087425/index.html"
+      },
+      {
+        "name": "海上餐厅刮鱼鳞",
+        "url": "https://hsy.cdlionhead.com/resource/minigame/ScaleTheFish/release/noads/1.0/index.html"
+      },
+      {
+        "name": "小妖退退退",
+        "url": "https://shlxapi.wyf310.com/sites/web/"
+      },
+      {
+        "name": "我的发财日记",
+        "url": "https://bsls-cdn.jvplay.cn/m1b/debug/webgl/webh5/index.html"
+      },
+      {
+        "name": "王者枪神",
+        "url": "https://file.gugudang.com/res/down/public/p_hero_squad_o/web-mobile/lts2/index.html?t=1770379534157"
+      },
+      {
+        "name": "想玩什么",
+        "url": "http://172.19.0.142:3000"
+      },
+      {
+        "name": "抖音小游戏",
+        "url": "http://172.19.0.142:3000"
+      },
+      {
+        "name": "和我说",
+        "url": "http://172.19.0.142:3000"
+      },
+      {
+        "name": "都无广告",
+        "url": "http://172.19.0.142:3000"
+      }
+    ]
+  },
+  {
+    "title": "Amazon站点",
+    "links": [
+      {
+        "name": "Amazon英国",
+        "url": "https://www.amazon.co.uk/ref=nav_logo"
+      },
+      {
+        "name": "Amazon美国",
+        "url": "https://www.amazon.com/ref=nav_logo"
+      },
+      {
+        "name": "Amazon澳洲",
+        "url": "https://www.amazon.com.au/ref=nav_logo"
+      },
+      {
+        "name": "Amazon加拿大",
+        "url": "https://www.amazon.ca/ref=nav_logo"
+      },
+      {
+        "name": "Amazon德国",
+        "url": "https://www.amazon.de/ref=nav_logo"
+      },
+      {
+        "name": "Amazon法国",
+        "url": "https://www.amazon.fr/ref=nav_logo"
+      },
+      {
+        "name": "沃尔玛",
+        "url": "https://www.walmart.com/"
+      },
+      {
+        "name": "雨果跨境",
+        "url": "https://www.cifnews.com/"
+      },
+      {
+        "name": "蓝海亿观网",
+        "url": "https://www.egainnews.com/"
+      },
+      {
+        "name": "网经社",
+        "url": "https://www.100ec.cn/"
+      },
+      {
+        "name": "亿邦动力",
+        "url": "https://www.ebrun.com/"
+      },
+      {
+        "name": "AMZ123",
+        "url": "https://www.amz123.com/"
+      },
+      {
+        "name": "白鲸出海",
+        "url": "https://www.baijing.cn/"
+      },
+      {
+        "name": "小米商城",
+        "url": "https://www.mi.com/shop"
+      },
+      {
+        "name": "京东",
+        "url": "https://www.jd.com/"
+      },
+      {
+        "name": "淘宝",
+        "url": "https://www.taobao.com/"
+      },
+      {
+        "name": "阿里巴巴",
+        "url": "https://www.1688.com/"
+      },
+      {
+        "name": "咸鱼",
+        "url": "https://www.goofish.com/"
+      }
+    ]
+  },
+  {
+    "title": "效率网站",
+    "links": [
+      {
+        "name": "Deepseek",
+        "url": "https://chat.deepseek.com/"
+      },
+      {
+        "name": "豆包",
+        "url": "https://www.doubao.com/chat/"
+      },
+      {
+        "name": "千问",
+        "url": "https://tongyi.aliyun.com/qianwen"
+      },
+      {
+        "name": "Gemini",
+        "url": "https://gemini.google.com/app"
+      },
+      {
+        "name": "Grork",
+        "url": "https://grok.com"
+      },
+      {
+        "name": "ChatGPT",
+        "url": "https://chatgpt.com"
+      },
+      {
+        "name": "Claude",
+        "url": "https://claude.ai"
+      },
+      {
+        "name": "大小写字母转化",
+        "url": "https://www.iamwawa.cn/daxiaoxie.html"
+      },
+      {
+        "name": "单词去重",
+        "url": "https://www.iamwawa.cn/quchong.html"
+      },
+      {
+        "name": "重量单位转化",
+        "url": "https://www.iamwawa.cn/zhongliang.html"
+      },
+      {
+        "name": "长度单位转换",
+        "url": "https://www.iamwawa.cn/changdu.html"
+      },
+      {
+        "name": "货币汇率转换",
+        "url": "https://www.iamwawa.cn/huilv.html"
+      },
+      {
+        "name": "长描代码转化",
+        "url": "https://www.amz123.com/tools-bianjiqi"
+      },
+      {
+        "name": "Yandex",
+        "url": "https://yandex.com/"
+      }
+    ]
+  },
+  {
+    "title": "常用网站",
+    "links": [
+      {
+        "name": "易仓",
+        "url": "http://skykey.ez-wms.com/"
+      },
+      {
+        "name": "筋斗云",
+        "url": "https://www.jetcloud.vip/#/dashboard"
+      },
+      {
+        "name": "搜狗翻译",
+        "url": "https://fanyi.sogou.com/text"
+      },
+      {
+        "name": "谷歌翻译",
+        "url": "https://translate.google.com/?sl=auto&tl=zh-CN&op=translate"
+      },
+      {
+        "name": "点餐",
+        "url": "http://47.100.240.20/index.html#/login?redirect=%2Fdashboard"
+      },
+      {
+        "name": "考勤请假",
+        "url": "http://47.103.118.132/JetCloud/Loginx.aspx"
+      },
+      {
+        "name": "BI",
+        "url": "http://bi.jetcloudmall.com:37799/webroot/decision/login?origin=27fa46ae-f1d1-429f-b645-1da8fc764aa1"
+      },
+      {
+        "name": "价值观系统",
+        "url": "http://erp.jetcloudmall.com:91/Account/Login"
+      },
+      {
+        "name": "智能中台BI",
+        "url": "http://58.33.38.50:37799/webroot/decision"
+      },
+      {
+        "name": "活字格",
+        "url": "http://47.103.222.103:22345/pur"
+      },
+      {
+        "name": "跨境神灯",
+        "url": "https://www.jetcloud.ltd/datakjsd/#/home/homepage"
+      },
+      {
+        "name": "Vine计划追踪",
+        "url": "https://version-pledge-professional-journalist.trycloudflare.com/portal/notify/first_arrival"
+      },
+      {
+        "name": "AI生图",
+        "url": "https://image.sqxshawn.site/"
+      }
+    ]
+  }
+];
+
+const PALETTE = [
+  { g: '#1E6FFF', tint: '#E9F0FF', border: '#B9CEFF' },
+  { g: '#7A5AF8', tint: '#EFEBFE', border: '#CFC3FF' },
+  { g: '#F08519', tint: '#FEF0E3', border: '#FFD3A6' },
+  { g: '#E0447C', tint: '#FCE9F0', border: '#F6B9CD' }
+];
+
+const colsEl = document.getElementById('cols');
+const funWrap = document.getElementById('funWrap');
+const emptyEl = document.getElementById('empty');
+const mainEl = document.getElementById('main');
+const qEl = document.getElementById('q');
+const clearEl = document.getElementById('clear');
+
+function hostOf(url) {
+  try { return new URL(url).host.replace(/^www\./, ''); }
+  catch (e) { return url.replace(/^https?:\/\//, '').split('/')[0]; }
+}
+
+function initialOf(name) {
+  const s = name.trim();
+  if (!s) return '·';
+  const m = s.match(/[A-Za-z0-9]/);
+  if (m) return m[0].toUpperCase();
+  return s.charAt(0);
+}
+
+function makeSection(group, gi, opts) {
+  const pal = PALETTE[gi % PALETTE.length];
+  const sec = document.createElement('section');
+  sec.id = 'sec-' + gi;
+  sec.style.setProperty('--g', pal.g);
+  sec.style.setProperty('--g-tint', pal.tint);
+  sec.style.setProperty('--g-border', pal.border);
+
+  const head = document.createElement('div');
+  head.className = 'sec-head';
+  head.innerHTML = '<span class="sec-bar"></span><span class="sec-title"></span><span class="sec-count"></span>';
+  head.querySelector('.sec-title').textContent = group.title;
+  head.querySelector('.sec-count').textContent = group.links.length;
+
+  const grid = document.createElement('div');
+  grid.className = 'grid' + (opts.fun ? ' fun-grid' : '');
+
+  group.links.forEach((link) => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = link.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.title = link.name + '\n' + link.url;
+    a.dataset.search = (link.name + ' ' + hostOf(link.url) + ' ' + link.url).toLowerCase();
+
+    const ico = document.createElement('span');
+    ico.className = 'ico';
+    ico.textContent = initialOf(link.name);
+    const nm = document.createElement('span');
+    nm.className = 'name';
+    nm.textContent = link.name;
+    a.append(ico, nm);
+    grid.appendChild(a);
+  });
+
+  sec.append(head, grid);
+  return sec;
+}
+
+function build() {
+  colsEl.innerHTML = '';
+  funWrap.innerHTML = '';
+  NAV_GROUPS.forEach((group, gi) => {
+    // 娱乐组放到底部通栏，其余三组三栏全展示
+    if (group.title.indexOf('娱乐') !== -1) {
+      funWrap.appendChild(makeSection(group, gi, { fun: true }));
+    } else {
+      colsEl.appendChild(makeSection(group, gi, { fun: false }));
+    }
+  });
+}
+
+function fixOrphans() {
+  [colsEl, funWrap].forEach((root) => {
+    root.querySelectorAll('.grid').forEach((grid) => {
+      const cards = [...grid.querySelectorAll('.card')].filter((c) => c.offsetParent !== null);
+      cards.forEach((c) => c.classList.remove('wide'));
+      if (cards.length < 2) return;
+      const byRow = new Map();
+      cards.forEach((c) => {
+        const top = Math.round(c.offsetTop);
+        if (!byRow.has(top)) byRow.set(top, []);
+        byRow.get(top).push(c);
+      });
+      const rows = [...byRow.entries()].sort((a, b) => a[0] - b[0]);
+      const last = rows[rows.length - 1][1];
+      const perRow = rows[0][1].length;
+      if (last.length === 1 && perRow > 1) last[0].classList.add('wide');
+    });
+  });
+}
+
+function filter() {
+  const kw = qEl.value.trim().toLowerCase();
+  clearEl.style.display = kw ? 'flex' : 'none';
+  let visibleTotal = 0;
+
+  mainEl.querySelectorAll('section').forEach((sec) => {
+    const grid = sec.querySelector('.grid');
+    grid.classList.toggle('searching', !!kw);
+    let visible = 0;
+    grid.querySelectorAll('.card').forEach((c) => {
+      const hit = !kw || c.dataset.search.includes(kw);
+      c.classList.toggle('hidden', !hit);
+      if (hit) visible++;
+    });
+    sec.classList.toggle('hidden', visible === 0);
+    visibleTotal += visible;
+  });
+
+  emptyEl.classList.toggle('show', visibleTotal === 0);
+  fixOrphans();
+}
+
+let raf = 0;
+qEl.addEventListener('input', () => {
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(filter);
+});
+qEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { qEl.value = ''; filter(); }
+  if (e.key === 'Enter') {
+    const first = [...document.querySelectorAll('.card')].find((c) => c.offsetParent !== null);
+    if (first) window.open(first.href, '_blank', 'noopener');
+  }
+});
+clearEl.addEventListener('click', () => { qEl.value = ''; filter(); qEl.focus(); });
+
+build();
+filter();
+
+let resizeRaf = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(resizeRaf);
+  resizeRaf = requestAnimationFrame(fixOrphans);
+});
+</script>
+</body>
+</html>
